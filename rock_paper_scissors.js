@@ -1,68 +1,86 @@
 function computerPlay() {
-    let choice = Math.floor(Math.random() * 3);
-    if (choice === 0) {
-        return "Rock";
-    } else if (choice === 1) {
-        return "Paper";
-    } else {
-        return "Scissors";
-    }
+  let choice = Math.floor(Math.random() * 3);
+  if (choice === 0) {
+    return "rock";
+  } else if (choice === 1) {
+    return "paper";
+  } else {
+    return "scissors";
+  }
 }
 
-function capitalize(text){
-    let firstLetter = text.charAt(0)
-    let rest = text.slice(1)
-    return (firstLetter.toUpperCase() + rest.toLowerCase())
+function playRound(playerSelection) {
+  let computerSelection = computerPlay();
+  if (playerSelection === computerSelection) {
+    return `Draw!`;
+  }
+  if (playerSelection === "rock" && computerSelection === "scissors") {
+    return `You win!`;
+  }
+  if (playerSelection === "scissors" && computerSelection === "rock") {
+    return `You lose!`;
+  }
+  if (playerSelection === "rock" && computerSelection === "paper") {
+    return `You lose!`;
+  }
+  if (playerSelection === "paper" && computerSelection === "rock") {
+    return `You win!`;
+  }
+  if (playerSelection === "paper" && computerSelection === "scissors") {
+    return `You lose!`;
+  }
+  if (playerSelection === "scissors" && computerSelection === "paper") {
+    return `You win!`;
+  }
+}
+function updateScoreDiv(divId, scoreToUpdate) {
+  if (scoreToUpdate === playerScore) {
+    document.getElementById(divId).innerHTML = `Your score: ${scoreToUpdate}`;
+  } else {
+    document.getElementById(
+      divId
+    ).innerHTML = `Computer score: ${scoreToUpdate}`;
+  }
 }
 
-function playRound() {
-    let playerSelection = capitalize(prompt("What's your selection?", "Rock"));
-    let computerSelection = computerPlay();
-
-    if (playerSelection === computerSelection) {
-        return `Draw!`;
-    }
-    if (playerSelection === "Rock" && computerSelection === "Scissors") {
-        return `You win! ${playerSelection} beats ${computerSelection}`
-    }
-    if (playerSelection === "Scissors" && computerSelection === "Rock") {
-        return `You lose! ${computerSelection} beats ${playerSelection}`
-    }
-    if (playerSelection === "Rock" && computerSelection === "Paper") {
-        return `You lose! ${computerSelection} beats ${playerSelection}`
-    }
-    if (playerSelection === "Paper" && computerSelection === "Rock") {
-        return `You win! ${playerSelection} beats ${computerSelection}`
-    }
-    if (playerSelection === "Paper" && computerSelection === "Scissors") {
-        return `You lose! ${computerSelection} beats ${playerSelection}`
-    }
-    if (playerSelection === "Scissors" && computerSelection === "Paper") {
-        return `You win! ${playerSelection} beats ${computerSelection}`
-    }
-
+function changeScore(result) {
+  switch (result) {
+    case `You win!`:
+      playerScore++;
+      updateScoreDiv("playerScore", playerScore);
+      if (playerScore === 5) {
+        alert("You win!");
+        disableButtons();
+        break;
+      }
+      break;
+    case `You lose!`:
+      computerScore++;
+      updateScoreDiv("computerScore", computerScore);
+      if (computerScore === 5) {
+        alert("You lose!");
+        disableButtons();
+        break;
+      }
+      break;
+    default:
+      break;
+  }
 }
 
-function playFiveRounds() {
-    let playerScore = 0;
-    let computerScore = 0;
-    for (let i = 0; i < 5; i++) {
-        let result = playRound();
-        alert(result);
-        if (result.includes("win")) {
-            playerScore++;
-        } else if (result.includes("lose")) {
-            computerScore++;
-        }
-    }
-    alert(`Your score: ${playerScore}\nComputer score: ${computerScore}`);
-    if (playerScore > computerScore) {
-        return "You win!"
-    } else {
-        return "You lose!"
-    }
+function disableButtons() {
+  buttons.forEach((button) => {
+    button.disabled = true;
+  });
 }
+let playerScore = 0;
+let computerScore = 0;
 
-console.log(playFiveRounds());
+const buttons = document.querySelectorAll("button");
 
-
+buttons.forEach((button) => {
+  button.addEventListener("click", function (e) {
+    let result = playRound(button.getAttribute("id"));
+    changeScore(result);
+  });
+});
